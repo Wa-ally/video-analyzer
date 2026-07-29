@@ -1,4 +1,4 @@
-const CACHE_NAME = 'video-analyzer-v1';
+const CACHE_NAME = 'video-analyzer-v2';
 const ASSETS = [
   './',
   './index.html',
@@ -6,6 +6,7 @@ const ASSETS = [
   './js/data.js',
   './js/analyzer.js',
   './js/rewriter.js',
+  './js/extractor.js',
   './js/app.js',
   './manifest.json',
 ];
