@@ -37,13 +37,254 @@ const App = {
   showHome() {
     this.switchView('homeView');
     this.updateNav('home');
+    this.hideExtractProgress();
   },
 
   switchInputTab(tab) {
     document.querySelectorAll('.input-tab').forEach(t => t.classList.remove('active'));
     document.querySelector(`[data-tab="${tab}"]`).classList.add('active');
     document.querySelectorAll('.input-area').forEach(a => a.classList.remove('active'));
-    document.getElementById(tab === 'text' ? 'textInputArea' : 'linkInputArea').classList.add('active');
+    document.getElementById(tab === 'text' ? 'textInputArea' : tab === 'link' ? 'linkInputArea' : 'extractInputArea').classList.add('active');
+    // 隐藏/显示分析按钮
+    const analyzeBtn = document.getElementById('analyzeBtn');
+    if (tab === 'extract') {
+      analyzeBtn.style.display = 'none';
+    } else {
+      analyzeBtn.style.display = 'block';
+    }
+  },
+
+  /* === 视频提取功能 === */
+  _extractMode: 'link',
+  _selectedFile: null,
+  _extractionResult: null,
+
+  switchExtractMode(mode) {
+    this._extractMode = mode;
+    document.querySelectorAll('.extract-mode-tab').forEach(t => t.classList.remove('active'));
+    document.querySelector(`[data-mode="${mode}"]`).classList.add('active');
+    document.querySelectorAll('.extract-mode-area').forEach(a => a.classList.remove('active'));
+    document.getElementById(mode === 'link' ? 'extractLinkMode' : 'extractFileMode').classList.add('active');
+  },
+
+  onFileSelected(input) {
+    const file = input.files[0];
+    if (!file) return;
+    if (!file.type.startsWith('video/')) {
+      this.toast('请选择视频文件（MP4/WEBM/MOV）');
+      input.value = '';
+      return;
+    }
+    this._selectedFile = file;
+    const sizeMB = (file.size / 1024 / 1024).toFixed(1);
+    const info = document.getElementById('fileInfo');
+    info.style.display = 'block';
+    info.innerHTML = `
+      <div class="file-info-row">
+        <span class="file-info-icon">🎬</span>
+        <div class="file-info-detail">
+          <div class="file-info-name">${this.escapeHTML(file.name)}</div>
+          <div class="file-info-meta">${sizeMB} MB · ${file.type || '视频文件'}</div>
+        </div>
+        <button class="file-info-remove" onclick="App.clearFile()">✕</button>
+      </div>
+    `;
+  },
+
+  clearFile() {
+    this._selectedFile = null;
+    document.getElementById('videoFileInput').value = '';
+    document.getElementById('fileInfo').style.display = 'none';
+  },
+
+  showExtractProgress(pct, text, phase) {
+    const prog = document.getElementById('extractProgress');
+    const fill = document.getElementById('extractProgressFill');
+    const txt = document.getElementById('extractProgressText');
+    prog.style.display = 'block';
+    fill.style.width = pct + '%';
+    txt.textContent = text;
+  },
+
+  hideExtractProgress() {
+    document.getElementById('extractProgress').style.display = 'none';
+  },
+
+  async runExtraction() {
+    if (this._extractMode === 'link') {
+      const url = document.getElementById('extractLinkInput').value.trim();
+      if (url.length < 5) { this.toast('请输入视频链接'); return; }
+      this.showExtractProgress(5, '正在识别平台...', 'link');
+      try {
+        const result = await Extractor.extractFromLink(url);
+        this.hideExtractProgress();
+        if (result.error) { this.toast(result.error); return; }
+        if (!result.segments || result.segments.length === 0) {
+          this.toast('未能提取到文案内容，请尝试上传视频文件进行 OCR 提取');
+          return;
+        }
+        this._extractionResult = result;
+        this.renderExtractionResult(result);
+        this.switchView('extractView');
+      } catch (e) {
+        this.hideExtractProgress();
+        this.toast('提取失败：' + e.message + '。请尝试上传视频文件');
+      }
+    } else {
+      if (!this._selectedFile) { this.toast('请先选择视频文件'); return; }
+      this.showExtractProgress(0, '正在加载视频...', 'file');
+      try {
+        const result = await Extractor.extractFromVideoFile(
+          this._selectedFile,
+          (pct, text, phase) => this.showExtractProgress(pct, text, phase)
+        );
+        this.hideExtractProgress();
+        if (!result.segments || result.segments.length === 0) {
+          this.toast('未能提取到文案内容');
+          return;
+        }
+        this._extractionResult = result;
+        this.renderExtractionResult(result);
+        this.switchView('extractView');
+      } catch (e) {
+        this.hideExtractProgress();
+        this.toast('提取失败：' + e.message);
+      }
+    }
+  },
+
+  renderExtractionResult(result) {
+    const content = document.getElementById('extractContent');
+    let html = '';
+
+    // 概览卡片
+    html += `
+      <div class="result-card">
+        <div class="result-header">
+          <h3>🎬 提取结果</h3>
+          <span class="platform-badge">${result.platform?.icon || '📹'} ${result.platform?.name || '视频'}</span>
+        </div>
+        ${result.title ? `<div style="font-size:0.95rem;font-weight:600;margin-bottom:8px;">${this.escapeHTML(result.title)}</div>` : ''}
+        ${result.description ? `<div style="font-size:0.85rem;color:var(--text-secondary);margin-bottom:8px;line-height:1.6;">${this.escapeHTML(result.description)}</div>` : ''}
+        <div class="extract-meta">
+          <span>📝 ${result.segments.length} 段文案</span>
+          <span>🔧 ${result.source || '提取'}</span>
+          ${result.duration ? `<span>⏱ ${Math.floor(result.duration / 60)}分${Math.round(result.duration % 60)}秒</span>` : ''}
+        </div>
+        ${result.methods && result.methods.length > 0 ? `<div style="font-size:0.75rem;color:var(--text-muted);margin-top:6px;">提取方式：${result.methods.filter(m => !m.includes('failed')).join('、')}</div>` : ''}
+      </div>
+    `;
+
+    // 操作按钮
+    html += `
+      <div class="extract-actions">
+        <button class="extract-action-btn primary" onclick="App.analyzeExtracted()">🔍 分析爆点</button>
+        <button class="extract-action-btn" onclick="App.copyExtracted()">📋 复制全文</button>
+        <button class="extract-action-btn" onclick="App.exportExtracted('txt')">📄 导出TXT</button>
+        <button class="extract-action-btn" onclick="App.exportExtracted('srt')">🎬 导出SRT</button>
+        <button class="extract-action-btn" onclick="App.exportExtracted('json')">💾 导出JSON</button>
+      </div>
+    `;
+
+    // 时间轴
+    html += '<div class="result-card"><div class="result-header"><h3>📋 文案时间轴</h3></div>';
+    html += '<div class="timeline">';
+    result.segments.forEach((seg, i) => {
+      const timeStr = Extractor.formatTimecodeShort(seg.start);
+      const sourceIcon = Extractor.getSourceIcon(seg.source);
+      const sourceName = Extractor.getSourceName(seg.source);
+      const confClass = seg.confidence === 'high' ? 'high' : seg.confidence === 'low' ? 'low' : '';
+      html += `
+        <div class="timeline-item" data-index="${i}">
+          <div class="timeline-time">${timeStr}</div>
+          <div class="timeline-dot"></div>
+          <div class="timeline-content">
+            <div class="timeline-text" id="seg-text-${i}">${this.escapeHTML(seg.text)}</div>
+            <div class="timeline-meta">
+              <span class="timeline-source">${sourceIcon} ${sourceName}</span>
+              ${seg.confidence ? `<span class="timeline-conf ${confClass}">${seg.confidence === 'high' ? '高' : seg.confidence === 'medium' ? '中' : '低'}可信度</span>` : ''}
+              <button class="timeline-edit-btn" onclick="App.editSegment(${i})">✏️ 编辑</button>
+            </div>
+          </div>
+        </div>
+      `;
+    });
+    html += '</div></div>';
+
+    content.innerHTML = html;
+  },
+
+  editSegment(i) {
+    const el = document.getElementById(`seg-text-${i}`);
+    if (!el) return;
+    const currentText = el.textContent;
+    const isEditing = el.querySelector('textarea');
+    if (isEditing) {
+      // 保存
+      const newText = isEditing.value.trim();
+      if (newText) {
+        this._extractionResult.segments[i].text = newText;
+      }
+      el.innerHTML = this.escapeHTML(newText || currentText);
+      this.toast('已保存');
+    } else {
+      // 进入编辑
+      el.innerHTML = `<textarea class="seg-edit-textarea" rows="3">${this.escapeHTML(currentText)}</textarea>`;
+      const ta = el.querySelector('textarea');
+      ta.focus();
+      ta.addEventListener('blur', () => this.editSegment(i));
+    }
+  },
+
+  analyzeExtracted() {
+    if (!this._extractionResult || !this._extractionResult.segments) return;
+    const text = Extractor.mergeToPlainText(this._extractionResult.segments);
+    if (text.length < 15) { this.toast('提取的文案太短，无法分析'); return; }
+
+    this.showLoading('正在分析爆点...');
+    setTimeout(() => {
+      try {
+        const result = Analyzer.analyze(text);
+        if (result.error) { this.hideLoading(); this.toast(result.error); return; }
+        this.currentAnalysis = result;
+        this.renderAnalysis(result);
+        this.hideLoading();
+        this.switchView('analysisView');
+      } catch (e) {
+        this.hideLoading();
+        this.toast('分析出错：' + e.message);
+      }
+    }, 600);
+  },
+
+  copyExtracted() {
+    if (!this._extractionResult) return;
+    const text = Extractor.exportToTXT(this._extractionResult.segments, this._extractionResult.title);
+    navigator.clipboard.writeText(text).then(() => this.toast('已复制到剪贴板'));
+  },
+
+  exportExtracted(format) {
+    if (!this._extractionResult) return;
+    const segs = this._extractionResult.segments;
+    const title = this._extractionResult.title || '视频文案';
+    const date = new Date().toISOString().slice(0, 10);
+
+    if (format === 'txt') {
+      const txt = Extractor.exportToTXT(segs, title);
+      Extractor.downloadFile(txt, `${title}_${date}.txt`, 'text/plain');
+    } else if (format === 'srt') {
+      const srt = Extractor.exportToSRT(segs);
+      Extractor.downloadFile(srt, `${title}_${date}.srt`, 'text/plain');
+    } else if (format === 'json') {
+      const json = Extractor.exportToJSON(segs, {
+        title,
+        platform: this._extractionResult.platform?.key,
+        source: this._extractionResult.source,
+        url: this._extractionResult.url,
+      });
+      Extractor.downloadFile(json, `${title}_${date}.json`, 'application/json');
+    }
+    this.toast(`已导出 ${format.toUpperCase()} 文件`);
   },
 
   /* === 快捷示例 === */
@@ -68,6 +309,8 @@ const App = {
   /* === 分析入口 === */
   runAnalysis() {
     const textTab = document.querySelector('[data-tab="text"]').classList.contains('active');
+    const linkTab = document.querySelector('[data-tab="link"]').classList.contains('active');
+    if (!textTab && !linkTab) { this.toast('请使用提取功能或切换到文案/链接输入'); return; }
     let input;
     if (textTab) {
       input = document.getElementById('scriptInput').value.trim();
@@ -465,10 +708,37 @@ const App = {
   /* === 初始化 === */
   init() {
     this.loadExamples();
+    this.setupDragDrop();
     // 注册service worker
     if ('serviceWorker' in navigator) {
       navigator.serviceWorker.register('sw.js').catch(() => {});
     }
+  },
+
+  setupDragDrop() {
+    const zone = document.getElementById('fileDropZone');
+    if (!zone) return;
+    zone.addEventListener('dragover', (e) => {
+      e.preventDefault();
+      zone.classList.add('drag-over');
+    });
+    zone.addEventListener('dragleave', () => {
+      zone.classList.remove('drag-over');
+    });
+    zone.addEventListener('drop', (e) => {
+      e.preventDefault();
+      zone.classList.remove('drag-over');
+      const file = e.dataTransfer.files[0];
+      if (file && file.type.startsWith('video/')) {
+        const input = document.getElementById('videoFileInput');
+        const dt = new DataTransfer();
+        dt.items.add(file);
+        input.files = dt.files;
+        this.onFileSelected(input);
+      } else {
+        this.toast('请拖入视频文件');
+      }
+    });
   },
 };
 
