@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <meta name="theme-color" content="#0d0d0d">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <title>爆款视频分析器</title>
+  <link rel="manifest" href="manifest.json">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="apple-touch-icon" href="icons/icon-192.png">
+</head>
+<body>
+  <div id="app">
+    <!-- 顶部导航 -->
+    <header class="app-header">
+      <div class="header-title">
+        <span class="logo">📊</span>
+        <span>爆款视频分析器</span>
+      </div>
+      <button class="header-btn" onclick="App.showHome()" title="首页">🏠</button>
+    </header>
+
+    <!-- 主内容区 -->
+    <main class="app-main" id="mainContent">
+      <!-- 首页 -->
+      <div id="homeView" class="view active">
+        <!-- 输入区 -->
+        <div class="input-section">
+          <h2 class="section-title">📝 输入视频链接或文案</h2>
+          <div class="input-tabs">
+            <button class="input-tab active" data-tab="text" onclick="App.switchInputTab('text')">📄 文案输入</button>
+            <button class="input-tab" data-tab="link" onclick="App.switchInputTab('link')">🔗 链接输入</button>
+          </div>
+          <div id="textInputArea" class="input-area active">
+            <textarea id="scriptInput" placeholder="粘贴视频文案内容，或直接输入你想分析的文案...&#10;&#10;示例：3个做自媒体的致命误区，第2个90%的人都中了。你是不是每天忙到飞起却没结果？问题出在没找对方向。但是！真正赚钱的根本不是日更——是找到对标拆解。第一步找对标，第二步拆结构，第三步套进你的领域。评论区扣1，我下条详细拆。关注我，下条接着拆。" rows="6"></textarea>
+          </div>
+          <div id="linkInputArea" class="input-area">
+            <input type="text" id="linkInput" placeholder="粘贴抖音/快手/小红书/B站视频链接..." />
+            <p class="input-hint">支持抖音、快手、小红书、B站、视频号、YouTube等平台链接</p>
+          </div>
+          <button class="analyze-btn" onclick="App.runAnalysis()">🔍 开始分析</button>
+        </div>
+
+        <!-- 快捷示例 -->
+        <div class="examples-section">
+          <h3 class="subsection-title">⚡ 快捷示例</h3>
+          <div class="example-list" id="exampleList"></div>
+        </div>
+
+        <!-- 功能说明 -->
+        <div class="features-section">
+          <h3 class="subsection-title">🛠️ 核心功能</h3>
+          <div class="feature-grid">
+            <div class="feature-item">
+              <div class="feature-icon">🎯</div>
+              <div class="feature-name">爆点提取</div>
+              <div class="feature-desc">自动识别6类爆点要素</div>
+            </div>
+            <div class="feature-item">
+              <div class="feature-icon">🔬</div>
+              <div class="feature-name">深度分析</div>
+              <div class="feature-desc">拆解原理+生成模板</div>
+            </div>
+            <div class="feature-item">
+              <div class="feature-icon">✍️</div>
+              <div class="feature-name">仿写文案</div>
+              <div class="feature-desc">多版本去人机感生成</div>
+            </div>
+            <div class="feature-item">
+              <div class="feature-icon">📊</div>
+              <div class="feature-name">数据对比</div>
+              <div class="feature-desc">多平台传播效果对比</div>
+            </div>
+            <div class="feature-item">
+              <div class="feature-icon">⭐</div>
+              <div class="feature-name">评分报告</div>
+              <div class="feature-desc">三维度综合打分</div>
+            </div>
+            <div class="feature-item">
+              <div class="feature-icon">📈</div>
+              <div class="feature-name">热点趋势</div>
+              <div class="feature-desc">每周更新平台热词</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 分析结果视图 -->
+      <div id="analysisView" class="view">
+        <div id="analysisContent"></div>
+      </div>
+
+      <!-- 仿写结果视图 -->
+      <div id="rewriteView" class="view">
+        <div id="rewriteContent"></div>
+      </div>
+
+      <!-- 数据对比视图 -->
+      <div id="compareView" class="view">
+        <div id="compareContent"></div>
+      </div>
+
+      <!-- 热点趋势视图 -->
+      <div id="trendView" class="view">
+        <div id="trendContent"></div>
+      </div>
+    </main>
+
+    <!-- 底部导航 -->
+    <nav class="bottom-nav">
+      <button class="nav-item active" data-page="home" onclick="App.showHome()">
+        <span class="nav-icon">🏠</span>
+        <span class="nav-label">首页</span>
+      </button>
+      <button class="nav-item" data-page="compare" onclick="App.showCompare()">
+        <span class="nav-icon">📊</span>
+        <span class="nav-label">数据对比</span>
+      </button>
+      <button class="nav-item" data-page="trend" onclick="App.showTrend()">
+        <span class="nav-icon">📈</span>
+        <span class="nav-label">热点趋势</span>
+      </button>
+    </nav>
+  </div>
+
+  <!-- 弹窗：仿写配置 -->
+  <div id="rewriteModal" class="modal-overlay" style="display:none;">
+    <div class="modal">
+      <div class="modal-header">
+        <h3>✍️ 仿写配置</h3>
+        <button class="modal-close" onclick="App.closeRewriteModal()">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label>你的主题/领域</label>
+          <input type="text" id="rewriteTopic" placeholder="如：做自媒体、学AI、搞副业..." />
+        </div>
+        <div class="form-group">
+          <label>目标平台</label>
+          <select id="rewritePlatform">
+            <option value="douyin">🎵 抖音</option>
+            <option value="kuaishou">⚡ 快手</option>
+            <option value="xhs">📕 小红书</option>
+            <option value="bilibili">📺 B站</option>
+            <option value="wechat">💬 视频号</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>语气版本（可多选）</label>
+          <div class="checkbox-group">
+            <label class="checkbox-item"><input type="checkbox" value="aggressive" checked> 🔥 犀利版</label>
+            <label class="checkbox-item"><input type="checkbox" value="gentle" checked> 💜 走心版</label>
+            <label class="checkbox-item"><input type="checkbox" value="professional" checked> 📊 干货版</label>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-cancel" onclick="App.closeRewriteModal()">取消</button>
+        <button class="btn-confirm" onclick="App.runRewrite()">生成仿写</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast -->
+  <div id="toast" class="toast"></div>
+
+  <!-- 加载遮罩 -->
+  <div id="loadingOverlay" class="loading-overlay" style="display:none;">
+    <div class="loading-spinner"></div>
+    <div class="loading-text" id="loadingText">分析中...</div>
+  </div>
+
+  <script src="js/data.js"></script>
+  <script src="js/analyzer.js"></script>
+  <script src="js/rewriter.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
