@@ -32,6 +32,7 @@
           <div class="input-tabs">
             <button class="input-tab active" data-tab="text" onclick="App.switchInputTab('text')">📄 文案输入</button>
             <button class="input-tab" data-tab="link" onclick="App.switchInputTab('link')">🔗 链接输入</button>
+            <button class="input-tab" data-tab="extract" onclick="App.switchInputTab('extract')">🎬 视频提取</button>
           </div>
           <div id="textInputArea" class="input-area active">
             <textarea id="scriptInput" placeholder="粘贴视频文案内容，或直接输入你想分析的文案...&#10;&#10;示例：3个做自媒体的致命误区，第2个90%的人都中了。你是不是每天忙到飞起却没结果？问题出在没找对方向。但是！真正赚钱的根本不是日更——是找到对标拆解。第一步找对标，第二步拆结构，第三步套进你的领域。评论区扣1，我下条详细拆。关注我，下条接着拆。" rows="6"></textarea>
@@ -40,7 +41,33 @@
             <input type="text" id="linkInput" placeholder="粘贴抖音/快手/小红书/B站视频链接..." />
             <p class="input-hint">支持抖音、快手、小红书、B站、视频号、YouTube等平台链接</p>
           </div>
-          <button class="analyze-btn" onclick="App.runAnalysis()">🔍 开始分析</button>
+          <div id="extractInputArea" class="input-area">
+            <div class="extract-section">
+              <div class="extract-mode-tabs">
+                <button class="extract-mode-tab active" data-mode="link" onclick="App.switchExtractMode('link')">🔗 从链接提取</button>
+                <button class="extract-mode-tab" data-mode="file" onclick="App.switchExtractMode('file')">📁 上传视频文件</button>
+              </div>
+              <div id="extractLinkMode" class="extract-mode-area active">
+                <input type="text" id="extractLinkInput" placeholder="粘贴视频链接，自动提取视频内文案..." />
+                <p class="input-hint">YouTube/B站：直接提取视频字幕（含时间轴）<br>抖音/快手/小红书：抓取页面文案<br>支持自动识别平台</p>
+              </div>
+              <div id="extractFileMode" class="extract-mode-area">
+                <div class="file-upload-area" id="fileDropZone" onclick="document.getElementById('videoFileInput').click()">
+                  <div class="file-upload-icon">📁</div>
+                  <div class="file-upload-text">点击选择视频文件</div>
+                  <div class="file-upload-hint">或拖拽视频到此处 · 支持 MP4/WEBM/MOV</div>
+                  <input type="file" id="videoFileInput" accept="video/*" style="display:none;" onchange="App.onFileSelected(this)" />
+                </div>
+                <div id="fileInfo" class="file-info" style="display:none;"></div>
+              </div>
+              <button class="analyze-btn" onclick="App.runExtraction()" style="margin-top:12px;">🎬 开始提取文案</button>
+              <div id="extractProgress" class="extract-progress" style="display:none;">
+                <div class="extract-progress-bar"><div class="extract-progress-fill" id="extractProgressFill"></div></div>
+                <div class="extract-progress-text" id="extractProgressText">准备中...</div>
+              </div>
+            </div>
+          </div>
+          <button class="analyze-btn" onclick="App.runAnalysis()" id="analyzeBtn">🔍 开始分析</button>
         </div>
 
         <!-- 快捷示例 -->
@@ -83,6 +110,11 @@
               <div class="feature-name">热点趋势</div>
               <div class="feature-desc">每周更新平台热词</div>
             </div>
+            <div class="feature-item">
+              <div class="feature-icon">🎬</div>
+              <div class="feature-name">视频提取</div>
+              <div class="feature-desc">OCR+语音提取视频文案</div>
+            </div>
           </div>
         </div>
       </div>
@@ -105,6 +137,11 @@
       <!-- 热点趋势视图 -->
       <div id="trendView" class="view">
         <div id="trendContent"></div>
+      </div>
+
+      <!-- 视频提取结果视图 -->
+      <div id="extractView" class="view">
+        <div id="extractContent"></div>
       </div>
     </main>
 
@@ -175,6 +212,7 @@
   <script src="js/data.js"></script>
   <script src="js/analyzer.js"></script>
   <script src="js/rewriter.js"></script>
+  <script src="js/extractor.js"></script>
   <script src="js/app.js"></script>
 </body>
 </html>
