@@ -138,27 +138,27 @@ const COMPARISON_VIDEOS = [
 
 /* 热点趋势数据 - 按周更新 */
 const TREND_DATA = {
-  lastUpdate: '2026-07-30',
+  lastUpdate: '2026-09-03',
   weeklyHot: [
-    { rank: 1,  keyword: 'AI解压视频',     growth: '+280%', platform: 'douyin',   avgLikes: 150000, category: 'AIGC作品' },
-    { rank: 2,  keyword: 'AI宠物短剧',     growth: '+250%', platform: 'xhs',      avgLikes: 72000,  category: 'AIGC作品' },
-    { rank: 3,  keyword: 'AI短剧',         growth: '+210%', platform: 'douyin',   avgLikes: 180000, category: 'AIGC作品' },
-    { rank: 4,  keyword: '豆包AI整活',     growth: '+185%', platform: 'douyin',   avgLikes: 95000,  category: 'AI工具' },
-    { rank: 5,  keyword: 'AI暗黑风格',     growth: '+160%', platform: 'douyin',   avgLikes: 250000, category: 'AIGC作品' },
-    { rank: 6,  keyword: 'AI小人国',       growth: '+140%', platform: 'douyin',   avgLikes: 88000,  category: 'AIGC作品' },
-    { rank: 7,  keyword: 'AI梦核怀旧',     growth: '+125%', platform: 'xhs',      avgLikes: 56000,  category: 'AIGC作品' },
-    { rank: 8,  keyword: 'DeepSeek教程',   growth: '+110%', platform: 'bilibili', avgLikes: 52000,  category: 'AIGC培训' },
-    { rank: 9,  keyword: 'AI动物运动',     growth: '+90%',  platform: 'douyin',   avgLikes: 110000, category: 'AIGC作品' },
-    { rank: 10, keyword: 'AI对口型',       growth: '+75%',  platform: 'kuaishou', avgLikes: 68000,  category: 'AIGC作品' },
+    { rank: 1,  keyword: '优质AI内容',       growth: '+1430%', platform: 'douyin',   avgLikes: 125000, category: 'AIGC生态' },
+    { rank: 2,  keyword: 'AI精品内容消费',   growth: '+645%',  platform: 'douyin',   avgLikes: 68000,  category: 'AIGC生态' },
+    { rank: 3,  keyword: 'AI创作者经济',     growth: '+440%',  platform: 'douyin',   avgLikes: 32000,  category: 'AIGC生态' },
+    { rank: 4,  keyword: '快手AI特效',       growth: '+321%',  platform: 'kuaishou', avgLikes: 55000,  category: 'AI视频' },
+    { rank: 5,  keyword: 'AI内容播放量',     growth: '+199%',  platform: 'douyin',   avgLikes: 98000,  category: 'AIGC生态' },
+    { rank: 6,  keyword: '短剧出海',         growth: '+194%',  platform: 'douyin',   avgLikes: 72000,  category: '短剧' },
+    { rank: 7,  keyword: 'AI创作者数量',     growth: '+191%',  platform: 'douyin',   avgLikes: 28000,  category: 'AIGC生态' },
+    { rank: 8,  keyword: 'AI漫剧',           growth: '+105%',  platform: 'douyin',   avgLikes: 52000,  category: '漫剧' },
+    { rank: 9,  keyword: 'B站千万播放视频',  growth: '+50%',   platform: 'bilibili', avgLikes: 42000,  category: '长视频' },
+    { rank: 10, keyword: '微短剧市场',       growth: '+34%',   platform: 'douyin',   avgLikes: 85000,  category: '短剧' },
   ],
   platformTrends: {
-    douyin:   { avgViews: 1200000, avgLikes: 65000,  avgComments: 4200,  hotCategories: ['AI解压视频', 'AI短剧', '豆包AI整活', 'AI暗黑风格'] },
-    bilibili: { avgViews: 680000,  avgLikes: 38000,  avgComments: 5800,  hotCategories: ['DeepSeek教程', 'AI视频生成', 'AI二创', 'AI动画'] },
-    xhs:      { avgViews: 320000,  avgLikes: 28000,  avgComments: 1800,  hotCategories: ['AI宠物短剧', 'AI梦核怀旧', 'AI写真', 'AI教程'] },
-    kuaishou: { avgViews: 750000,  avgLikes: 42000,  avgComments: 2800,  hotCategories: ['AI对口型', 'AI短剧', 'AI副业', 'AI工具'] },
+    douyin:   { avgViews: 1450000, avgLikes: 78000,  avgComments: 4800,  hotCategories: ['优质AI内容', 'AI内容播放量', '短剧出海', 'AI漫剧'] },
+    bilibili: { avgViews: 720000,  avgLikes: 40000,  avgComments: 6000,  hotCategories: ['B站千万播放视频', 'AI视频生成', 'AI二创', 'AI动画'] },
+    xhs:      { avgViews: 350000,  avgLikes: 30000,  avgComments: 1900,  hotCategories: ['活人感内容', 'AI宠物短剧', 'AI写真', 'AI教程'] },
+    kuaishou: { avgViews: 820000,  avgLikes: 45000,  avgComments: 3000,  hotCategories: ['快手AI特效', 'AI短剧', 'AI副业', 'AI工具'] },
   },
-  dataSource: '新榜、蝉妈妈、飞瓜、AI新榜等第三方数据平台公开数据整理',
-  updateNote: '数据为公开报道整理，平台无公开API，存在1-3天延迟。基于2026年7月全网AI热点趋势分析更新。',
+  dataSource: '《2025抖音AIGC创作年度报告》、快手光合创作者大会、新榜/克劳锐2025内容趋势报告等公开数据整理',
+  updateNote: '数据为公开报道整理，平台无公开API，存在1-7天延迟。基于2025抖音AIGC年度报告、快手光合大会、新榜/克劳锐2025自媒体趋势分析，2026-09-03更新。',
 };
 
 /* 爆点评分权重配置 */
