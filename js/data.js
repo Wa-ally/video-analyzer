@@ -138,27 +138,27 @@ const COMPARISON_VIDEOS = [
 
 /* 热点趋势数据 - 按周更新 */
 const TREND_DATA = {
-  lastUpdate: '2026-09-03',
+  lastUpdate: '2026-09-04',
   weeklyHot: [
-    { rank: 1,  keyword: 'AI漫剧',           growth: '+603%',  platform: 'douyin',   avgLikes: 65000,  category: '漫剧' },
-    { rank: 2,  keyword: '短剧出海',         growth: '+195%',  platform: 'douyin',   avgLikes: 72000,  category: '短剧' },
-    { rank: 3,  keyword: '全民导演',         growth: '+150%',  platform: 'douyin',   avgLikes: 135000, category: 'AIGC生态' },
-    { rank: 4,  keyword: 'AI宠物短剧',       growth: '+105%',  platform: 'douyin',   avgLikes: 58000,  category: 'AI视频' },
-    { rank: 5,  keyword: '时空在场',         growth: '+85%',   platform: 'douyin',   avgLikes: 150000, category: 'AIGC生态' },
-    { rank: 6,  keyword: '活人感内容',       growth: '+75%',   platform: 'xhs',      avgLikes: 38000,  category: '自媒体趋势' },
-    { rank: 7,  keyword: 'AI风格开源',       growth: '+60%',   platform: 'douyin',   avgLikes: 42000,  category: 'AIGC生态' },
-    { rank: 8,  keyword: '短剧精品化',       growth: '+34%',   platform: 'douyin',   avgLikes: 85000,  category: '短剧' },
-    { rank: 9,  keyword: '视频播客',         growth: '+30%',   platform: 'bilibili', avgLikes: 28000,  category: '长视频' },
-    { rank: 10, keyword: 'B站千万播放视频',  growth: '+50%',   platform: 'bilibili', avgLikes: 48000,  category: '长视频' },
+    { rank: 1,  keyword: 'AI短剧2853亿播放',  growth: '+423%',  platform: 'douyin',   avgLikes: 120000, category: 'AI短剧' },
+    { rank: 2,  keyword: 'AI仿真人剧占七成',  growth: '+150%',  platform: 'douyin',   avgLikes: 95000,  category: 'AI短剧' },
+    { rank: 3,  keyword: 'AI猎奇短剧出海',    growth: '+120%',  platform: 'douyin',   avgLikes: 160000, category: 'AI短剧出海' },
+    { rank: 4,  keyword: '东方志怪AI短剧',    growth: '+85%',   platform: 'douyin',   avgLikes: 200000, category: 'AI短剧' },
+    { rank: 5,  keyword: '快手AIGC日均109万条', growth: '+75%',   platform: 'kuaishou', avgLikes: 52000,  category: 'AIGC生态' },
+    { rank: 6,  keyword: '真情实感内容回归',   growth: '+68%',   platform: 'xhs',      avgLikes: 42000,  category: '自媒体趋势' },
+    { rank: 7,  keyword: '小众赛道变现',       growth: '+55%',   platform: 'kuaishou', avgLikes: 38000,  category: '自媒体趋势' },
+    { rank: 8,  keyword: 'AI短剧精品化',      growth: '+34%',   platform: 'douyin',   avgLikes: 88000,  category: 'AI短剧' },
+    { rank: 9,  keyword: 'AI微短剧标识新规',   growth: '+30%',   platform: 'douyin',   avgLikes: 65000,  category: '政策法规' },
+    { rank: 10, keyword: '重生逆袭高频词',     growth: '+25%',   platform: 'douyin',   avgLikes: 72000,  category: 'AI短剧' },
   ],
   platformTrends: {
-    douyin:   { avgViews: 1500000, avgLikes: 82000,  avgComments: 5200,  hotCategories: ['AI漫剧', '短剧出海', '全民导演', 'AI宠物短剧'] },
-    bilibili: { avgViews: 780000,  avgLikes: 45000,  avgComments: 6500,  hotCategories: ['视频播客', 'B站千万播放视频', 'AI二创', 'AI动画'] },
-    xhs:      { avgViews: 380000,  avgLikes: 35000,  avgComments: 2200,  hotCategories: ['活人感内容', 'AI宠物短剧', 'AI写真', '运动健身'] },
-    kuaishou: { avgViews: 850000,  avgLikes: 48000,  avgComments: 3200,  hotCategories: ['快手AI特效', 'AI短剧', '团播', 'AI工具'] },
+    douyin:   { avgViews: 2800000, avgLikes: 120000, avgComments: 8500,  hotCategories: ['AI短剧', 'AI仿真人剧', '东方志怪', 'AI猎奇出海'] },
+    bilibili: { avgViews: 820000,  avgLikes: 48000,  avgComments: 6800,  hotCategories: ['AI二创', 'AI科普', 'AI动画', '视频播客'] },
+    xhs:      { avgViews: 420000,  avgLikes: 38000,  avgComments: 2400,  hotCategories: ['真情实感内容', 'AI穿搭', '观鸟', '前额叶'] },
+    kuaishou: { avgViews: 920000,  avgLikes: 52000,  avgComments: 3500,  hotCategories: ['AIGC日均109万条', '小众赛道', 'AI老铁故事', 'AI经典奇谈'] },
   },
-  dataSource: '《2025抖音AIGC年度关键词》报告、新榜2025年度内容复盘、克劳锐2025十大内容趋势、巨量引擎漫剧数据等公开数据整理',
-  updateNote: '数据为公开报道整理，平台无公开API，存在1-7天延迟。基于2025抖音AIGC年度9大关键词、新榜年度涨粉数据、克劳锐十大内容趋势（活人感/AI漫剧/短剧出海/视频播客等），2026-09-03更新。',
+  dataSource: 'DataEye 2026上半年AI剧漫剧数据报告、流媒体网8月AI短剧市场数据、2026快手光合大会AIGC分论坛、腾讯新闻2026爆款复盘、大公报AI短剧产业报道等公开数据整理',
+  updateNote: '数据为公开报道整理。2026年8月AI短剧播放量达2853亿创新高，TOP5均破10亿；AI仿真人剧占比超70%；TikTok AI猎奇短剧出海爆发；快手2.8亿日活消费AIGC内容；素人真情实感内容完播率比AI高3.2倍。2026-09-04更新。',
 };
 
 /* 爆点评分权重配置 */
